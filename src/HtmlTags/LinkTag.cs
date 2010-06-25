@@ -6,7 +6,21 @@ namespace HtmlTags
             : base("a")
         {
             Text(text);
-            Attr("href", url);
+            InitCommon(url, classes);
+        }
+
+        public LinkTag(HtmlTag child, string url, params string[] classes)
+            : base("a")
+        {
+            Child(child);
+            InitCommon(url, classes);
+        }
+
+        public string Href { get { return Attr("href"); } set { Attr("href", value); } }
+
+        private void InitCommon(string url, string[] classes)
+        {
+            Href = url;
             classes.Each(x => AddClass(x));
         }
     }
