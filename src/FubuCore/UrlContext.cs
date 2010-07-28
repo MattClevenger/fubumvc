@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
 using System.Web.Hosting;
+using FubuCore.Reflection;
 
 namespace FubuCore
 {
@@ -89,6 +91,15 @@ namespace FubuCore
         public static string WithQueryStringValues(this string querystring, params object[] values)
         {
             return querystring.ToFormat(values.Select(value => value.ToString().UrlEncoded()).ToArray());
+        }
+
+        public static string AddQueryString<T>(this string url, T model, Expression<Func<T, object>> modelExpression)
+        {
+            var value = modelExpression.Compile().Invoke(model);
+            var parameter = modelExpression.GetName();
+            var format = url.Contains("?") ? "{0}&{1}={2}" : "{0}?{1}={2}";
+            var newUrl = format.ToFormat(url, parameter, value.UrlEncoded());
+            return newUrl;
         }
 
         public static string UrlEncoded(this object target)

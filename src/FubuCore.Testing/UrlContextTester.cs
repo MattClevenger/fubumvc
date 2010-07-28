@@ -112,5 +112,34 @@ namespace FubuCore.Testing
         {
             "~/someUrl".ToPhysicalPath().ShouldEqual(@"\app\someUrl");
         }
+
+        [Test]
+        public void should_add_url_parameter()
+        {
+            var model = new SampleModel { Foo = 1, Bar = "2" };
+            var url = "~/someUrl";
+
+            var newUrl = url.AddQueryString(model, m => m.Foo);
+
+            newUrl.ShouldEqual("{0}?{1}={2}".ToFormat(url, "Foo", model.Foo));
+        }
+
+        [Test]
+        public void should_add_url_parameter_with_more_than_one_parameter()
+        {
+            var model = new SampleModel { Foo = 1, Bar = "2 with some spaces" };
+            var url = "~/someUrl";
+
+            var newUrl = url.AddQueryString(model, m => m.Foo).AddQueryString(model, m => m.Bar);
+
+            newUrl.ShouldEqual("{0}?{1}={2}&{3}={4}".ToFormat(url, "Foo", model.Foo, "Bar", model.Bar.UrlEncoded()));
+        }
+
+        internal class SampleModel
+        {
+            public int Foo { get; set; }
+            public string Bar { get; set; }
+        }
+
     }
 }
