@@ -40,7 +40,7 @@ namespace HtmlTags.Testing
         public void should_produce_fully_formed_img_html()
         {
             var img = imageTag.ToPrettyString();
-            Console.WriteLine(img);
+//            Console.WriteLine(img);
 
             img.ShouldEqual(string.Format("<img alt=\"{0}\" src=\"{1}\" />", altText, source));
         }

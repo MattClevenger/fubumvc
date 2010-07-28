@@ -7,72 +7,72 @@ namespace HtmlTags.Testing
     [TestFixture]
     public class LinkTagTester
     {
-        private string txt;
-        private string href;
-        private LinkTag textLink;
-        private string class1;
-        private string class2;
-        private ImageTag imgTag;
-        private LinkTag imgLink;
+        private string _txt;
+        private string _href;
+        private LinkTag _textLink;
+        private string _class1;
+        private string _class2;
+        private ImageTag _imgTag;
+        private LinkTag _imgLink;
 
         [SetUp]
         public void SetUp()
         {
-            txt = "some text";
-            href = "href";
-            class1 = "class1";
-            class2 = "class2";
-            textLink = new LinkTag(txt, href, class1, class2);
+            _txt = "some text";
+            _href = "href";
+            _class1 = "class1";
+            _class2 = "class2";
+            _textLink = new LinkTag(_txt, _href, _class1, _class2);
 
 
-            imgTag = new ImageTag("image.jpg", "its an image");
-            imgLink = new LinkTag(imgTag, href, class1, class2);
+            _imgTag = new ImageTag("image.jpg", "its an image");
+            _imgLink = new LinkTag(_imgTag, _href, _class1, _class2);
         }
 
         [Test]
         public void should_have_text()
         {
-            textLink.Text().ShouldEqual(txt);
+            _textLink.Text().ShouldEqual(_txt);
         }
 
         [Test]
         public void should_have_href()
         {
-            textLink.Href.ShouldEqual(href);
-            textLink.Attr("href").ShouldEqual(href);
+            _textLink.Href.ShouldEqual(_href);
+            _textLink.Attr("href").ShouldEqual(_href);
         }
 
         [Test]
         public void should_have_classes()
         {
-            textLink.GetClasses().Where(c => c == class1).ShouldHaveCount(1);
-            textLink.GetClasses().Where(c => c == class2).ShouldHaveCount(1);
+            _textLink.GetClasses().Where(c => c == _class1).ShouldHaveCount(1);
+            _textLink.GetClasses().Where(c => c == _class2).ShouldHaveCount(1);
         }
 
         [Test]
         public void should_contain_child()
         {
-            imgLink.FirstChild().ShouldEqual(imgTag);
+            _imgLink.FirstChild().ShouldEqual(_imgTag);
         }
 
         [Test]
         public void should_produce_fully_formed_link_html_with_text()
         {
-            var link = textLink.ToPrettyString();
-            Console.WriteLine(link);
+            var link = _textLink.ToPrettyString();
+//            Console.WriteLine(link);
 
             link.ShouldEqual(string.Format("<a href=\"{2}\" class=\"{0} {1}\">{3}</a>", 
-                class1, class2, href, txt));
+                _class1, _class2, _href, _txt));
         }
 
         [Test]
         public void should_produce_fully_formed_link_html_with_child()
         {
-            var link = imgLink.ToPrettyString();
-            Console.WriteLine(link);
+            var link = _imgLink.ToPrettyString();
+//            Console.WriteLine(link);
 
             link.ShouldEqual(string.Format("<a href=\"{2}\" class=\"{0} {1}\">{3}</a>", 
-                class1, class2, href, imgTag.ToPrettyString()));
+                _class1, _class2, _href, _imgTag.ToPrettyString()));
         }
 
     }
