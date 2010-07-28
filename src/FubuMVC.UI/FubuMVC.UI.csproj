@@ -70,6 +70,8 @@
     <Compile Include="Configuration\Interfaces.cs" />
     <Compile Include="PartialExpressionExtensions.cs" />
     <Compile Include="PrincipalRoles.cs" />
+    <Compile Include="Tables\TableGenerator.cs" />
+    <Compile Include="Tables\TableGeneratorExtensions.cs" />
     <Compile Include="Tags\PartialLambdaElementModifier.cs" />
     <Compile Include="Tags\PartialTagActionExpression.cs" />
     <Compile Include="Tags\PartialTagFactory.cs" />
