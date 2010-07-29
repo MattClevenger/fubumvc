@@ -1,3 +1,13 @@
+BUILD_TOOLS = ENV['ITBuildTools']
+if BUILD_TOOLS.nil?
+  msg = "Rake failed. No environment variable 'ITBuildTools' defined."
+  $stderr.puts msg
+  raise msg
+else
+  buildUtils = File.join(BUILD_TOOLS.dup, 'ItBuildTargets.rb')
+end
+
+
 COMPILE_TARGET = "debug"
 require "build_support/BuildUtils.rb"
 
@@ -87,3 +97,19 @@ zip do |zip|
 	zip.output_file = 'fubumvc.zip'
 	zip.output_path = 'build'
 end
+
+desc "From a teamcity build project compile and then publish artifacts defined via the BuildConfig.xml file."
+exec :teamcity_publish  do |cmd|
+  tc_build_number = ENV["BUILD_NUMBER"]
+  if tc_build_number.nil?
+     msg = "Publish not performed. Publishing artifacts is only done from teamcity."
+     $stderr.puts msg
+     raise msg
+  else
+     puts "Publishing artifacts for build #{tc_build_number}"
+     buildPublisher = File.join(BUILD_TOOLS.dup, 'BuildPublisher.exe')
+     cmd.path_to_command = buildPublisher
+     cmd.parameters  "#{tc_build_number} -b build_support/BuildConfig.xml"
+  end
+end
+

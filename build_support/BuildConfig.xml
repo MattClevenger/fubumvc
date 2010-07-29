@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<build module_name="NewFubuMVC" >
+  <dependencies>
+    <!-- in this case this is only used for publishing, as the project uses
+         ruby gems to pull dependencies. But for consistency with the
+         rest of the dependency section I (matt) added this-->
+    <module name="StructureMap" version="2.6.2.0"/>
+  </dependencies>
+  <artifacts>
+    <dir source="../build"/>
+  </artifacts>
+</build>
