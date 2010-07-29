@@ -7,6 +7,7 @@ else
   buildUtils = File.join(BUILD_TOOLS.dup, 'ItBuildTargets.rb')
 end
 
+TEAMCITY_NUNIT_RUNNER = ENV["teamcity.dotnet.nunitlauncher"]
 
 COMPILE_TARGET = "debug"
 require "build_support/BuildUtils.rb"
@@ -87,6 +88,23 @@ task :unit_test => :compile do
   runner = NUnitRunner.new :compilemode => COMPILE_TARGET, :source => 'src', :platform => 'x86'
   runner.executeTests ['FubuMVC.Tests', 'FubuCore.Testing', 'HtmlTags.Testing', 'Spark.Web.FubuMVC.Tests']
 end
+
+desc "Runs all unit tests in directories that end with *.Test or *.Tests ."
+nunit :teamcity_unit_test => :compile do |nunit|
+  testassemblies = FileList[].include("./**/bin/#{COMPILE_TARGET}/*.Tests.dll", "./**/bin/#{COMPILE_TARGET}/*.Testing.dll")
+  puts "Running unit tests in:"
+  puts testassemblies.to_s
+  nunit.assemblies testassemblies
+  if TEAMCITY_NUNIT_RUNNER.nil?
+     msg = "unit tests not performed. This target should only be run from teamcity."
+     $stderr.puts msg
+     raise msg
+  else
+    nunit.path_to_command = "#{TEAMCITY_NUNIT_RUNNER}"
+    nunit.options 'v2.0 x86 NUnit-2.5.0'
+  end
+end
+
 
 desc "Target used for the CI server"
 task :ci => [:unit_test,:zip]
