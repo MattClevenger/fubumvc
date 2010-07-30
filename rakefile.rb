@@ -90,10 +90,10 @@ task :unit_test => :compile do
 end
 
 desc "Runs all unit tests in directories that end with *.Test or *.Tests ."
-nunit :teamcity_unit_test => :compile do |nunit|
-  testassemblies = FileList[].include("./**/bin/#{COMPILE_TARGET}/*.Tests.dll", "./**/bin/#{COMPILE_TARGET}/*.Testing.dll")
+nunit :teamcity_unit_test => :compile  do |nunit|
+  testassemblies = FileList[].include("./**/bin/Debug/*.Tests.dll", "./**/bin/Debug/*.Test.dll").to_ary().join(";")
   puts "Running unit tests in:"
-  puts testassemblies.to_s
+  puts testassemblies
   nunit.assemblies testassemblies
   if TEAMCITY_NUNIT_RUNNER.nil?
      msg = "unit tests not performed. This target should only be run from teamcity."
