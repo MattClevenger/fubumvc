@@ -91,7 +91,7 @@ end
 
 desc "Runs all unit tests in directories that end with *.Test or *.Tests ."
 nunit :teamcity_unit_test => :compile  do |nunit|
-  testassemblies = FileList[].include("./**/bin/Debug/*.Tests.dll", "./**/bin/Debug/*.Test.dll").to_ary().join(";")
+  testassemblies = FileList[].include("./**/bin/#{COMPILE_TARGE}/*.Tests.dll", "./**/bin/#{COMPILE_TARGET}/*.Testing.dll").to_ary().join(";")
   puts "Running unit tests in:"
   puts testassemblies
   nunit.assemblies testassemblies
