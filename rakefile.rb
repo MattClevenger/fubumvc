@@ -32,26 +32,28 @@ task :default => [:compile, :unit_test]
 
 desc "Update the version information for the build"
 assemblyinfo :version do |asm|
-  asm_version = BUILD_NUMBER_BASE + ".0"
-  
-  begin
-	gittag = `git describe --long`.chomp 	# looks something like v0.1.0-63-g92228f4
-    gitnumberpart = /-(\d+)-/.match(gittag)
-    gitnumber = gitnumberpart.nil? ? '0' : gitnumberpart[1]
-    commit = `git log -1 --pretty=format:%H`
-  rescue
-    commit = "git unavailable"
-    gitnumber = "0"
-  end
-  build_number = "#{BUILD_NUMBER_BASE}.#{gitnumber}"
   tc_build_number = ENV["BUILD_NUMBER"]
-  puts "##teamcity[buildNumber '#{build_number}-#{tc_build_number}']" unless tc_build_number.nil?
-  asm.trademark = commit
-  asm.product_name = "#{PRODUCT} #{gittag}"
+  if tc_build_number.nil?
+    begin
+      gittag = `git describe --long`.chomp 	# looks something like v0.1.0-63-g92228f4
+      gitnumberpart = /-(\d+)-/.match(gittag)
+	  gitnumber = gitnumberpart.nil? ? '0' : gitnumberpart[1]
+	  commit = `git log -1 --pretty=format:%H`
+    rescue
+      commit = "git unavailable"
+	  gitnumber = "0"
+	end
+	build_number = "#{BUILD_NUMBER_BASE}.#{gitnumber}"
+    puts "Build is not on team city. Using default build number for version: " + build_number  
+  else
+    build_number = tc_build_number
+    puts "Build on team city. Using team city build number:  " + build_number
+  end
+
+  asm.product_name = "#{PRODUCT} #{build_number}"
   asm.description = build_number
-  asm.version = asm_version
+  asm.version = BUILD_NUMBER_BASE + ".0"
   asm.file_version = build_number
-  asm.custom_attributes :AssemblyInformationalVersion => asm_version
   asm.copyright = COPYRIGHT
   asm.output_file = COMMON_ASSEMBLY_INFO
 end
@@ -117,7 +119,7 @@ zip do |zip|
 end
 
 desc "From a teamcity build project compile and then publish artifacts defined via the BuildConfig.xml file."
-exec :teamcity_publish  do |cmd|
+exec :teamcity_publish => :compile  do |cmd|
   tc_build_number = ENV["BUILD_NUMBER"]
   if tc_build_number.nil?
      msg = "Publish not performed. Publishing artifacts is only done from teamcity."
