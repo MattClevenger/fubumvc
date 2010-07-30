@@ -60,6 +60,7 @@
     <Compile Include="ImageTagTester.cs" />
     <Compile Include="JsonUtilTester.cs" />
     <Compile Include="LinkTagTester.cs" />
+    <Compile Include="ListTagTester.cs" />
     <Compile Include="SelectTagTester.cs" />
     <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="TableTagTester.cs" />
