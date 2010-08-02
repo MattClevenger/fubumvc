@@ -56,5 +56,15 @@ namespace HtmlTags.Testing
             item.Text().ShouldEqual(text);
         }
 
+        [Test]
+        public void should_have_a_list_item_for_every_one_added()
+        {
+            _listTag.AddItem(li => li.Text("text"));
+            _listTag.AddItem("text");
+            _listTag.AddItem(new LinkTag("foo", "url"));
+
+            _listTag.Children.ShouldHaveCount(3);
+        }
+
     }
 }
