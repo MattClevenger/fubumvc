@@ -83,9 +83,23 @@ namespace FubuMVC.Core.Continuations
             assertMatches(_type == ContinuationType.Transfer && _destination != null && _destination.Equals(destination));
         }
 
+        public void AssertWasTransfered<TDestination>(Action<TDestination> validateDestinationAction)
+            where TDestination : class
+        {
+            assertMatches(_type == ContinuationType.Transfer && _destination != null);
+            assertDestinationValid(validateDestinationAction);            
+        }
+
         public void AssertWasRedirectedTo(object destination)
         {
             assertMatches(_type == ContinuationType.Redirect && _destination != null && _destination.Equals(destination));
+        }
+
+        public void AssertWasRedirected<TDestination>(Action<TDestination> validateDestinationAction)
+            where TDestination : class
+        {
+            assertMatches(_type == ContinuationType.Redirect && _destination != null);
+            assertDestinationValid(validateDestinationAction);
         }
 
         public void AssertWasRedirectedTo<T>(Expression<Action<T>> expression)
@@ -103,6 +117,18 @@ namespace FubuMVC.Core.Continuations
         public void AssertWasContinuedToNextBehavior()
         {
             assertMatches(_type == ContinuationType.NextBehavior);
+        }
+
+        private void assertDestinationValid<TDestination>(Action<TDestination> validateDestinationAction)
+            where TDestination : class
+        {
+            if (_destination.GetType() != typeof(TDestination))
+            {
+                throw new FubuAssertionException(
+                    string.Format("Expected destination of type {0}, but was {1}", typeof(TDestination), _destination.GetType()));
+            }
+            var typedDestination = _destination as TDestination;
+            validateDestinationAction(typedDestination); 
         }
 
         private void assertMatches(bool matches)
